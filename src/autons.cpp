@@ -1,4 +1,8 @@
+#include "autons.hpp"
 #include "main.h"
+#include "pros/adi.hpp"
+#include "pros/motors.h"
+#include "pros/rtos.h"
 
 
 /////
@@ -7,14 +11,20 @@
 /////
 
 
-const int DRIVE_SPEED = 110; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
+const int DRIVE_SPEED = 550; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
                              // If this is 127 and the robot tries to heading correct, it's only correcting by
                              // making one side slower.  When this is 87%, it's correcting by making one side
                              // faster and one side slower, giving better heading correction.
-const int TURN_SPEED  = 90;
-const int SWING_SPEED = 90;
+const int TURN_SPEED  = 300;
+const int SWING_SPEED = 300;
 
-
+pros::Motor fly (2, pros::E_MOTOR_GEARSET_06);
+  pros::Motor arm (11, pros::E_MOTOR_GEARSET_36);
+  pros::Controller master (pros::E_CONTROLLER_MASTER);
+  #define WING_PORT 'D'
+  pros::ADIDigitalOut wings(WING_PORT);
+  #define HANG_PORT 'A'
+  pros::ADIDigitalOut hang(HANG_PORT);
 
 ///
 // Constants
@@ -67,65 +77,434 @@ void modified_exit_condition() {
 
 
 
-///
-// Drive Example
-///
-void drive_example() {
-  // The first parameter is target inches
-  // The second parameter is max speed the robot will drive at
-  // The third parameter is a boolean (true or false) for enabling/disabling a slew at the start of drive motions
-  // for slew, only enable it when the drive distance is greater then the slew distance + a few inches
+
+void Match_Auton() {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
+//drive to goal and score matchload //////////////////////////////////////////////////////////////////////////////////////////////
+chassis.set_drive_pid(140, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+arm.move_relative(750, 100);
+  pros::delay(500);
+chassis.set_drive_pid(30, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-25, DRIVE_SPEED);
+  chassis.wait_drive();
+arm.move_relative(-750, 100);
+  pros::delay(500);
+
+//move
+chassis.set_drive_pid(-77, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(15, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
+//move to matchload bar and push tri out 
+chassis.set_turn_pid(55,TURN_SPEED);
+  chassis.wait_drive(); 
+chassis.set_drive_pid(-162, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
+chassis.set_turn_pid(-45, TURN_SPEED);
   chassis.wait_drive();
+ wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, 400);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-20, 400);
+  chassis.wait_drive();
+ wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+//push tri to offensive side and touch hang bar 
+  chassis.set_drive_pid(-102,350);
+  chassis.wait_drive();
+arm.move_relative(3000, 100);
+  pros::delay(50);
+
+
+}
+
+
+void Match_Auton_easy() 
+{
+//drive to goal and score matchload //////////////////////////////////////////////////////////////////////////////////////////////
+chassis.set_drive_pid(140, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+arm.move_relative(750, 100);
+  pros::delay(500);
+chassis.set_drive_pid(30, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-25, DRIVE_SPEED);
+  chassis.wait_drive();
+
+ //mid tris 
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(50,DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-55, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(40, DRIVE_SPEED);
+  chassis.wait_drive();
+
+arm.move_relative(-750, 100);
+  pros::delay(500);
+chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(10, DRIVE_SPEED);
+  chassis.wait_drive();
+arm.move_relative(750, 100);
+  pros::delay(500);
+
+chassis.set_drive_pid(-10, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+ wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-89, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(15, DRIVE_SPEED);
+  chassis.wait_drive();
+ wings.set_value(false);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(0, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-144, DRIVE_SPEED);
+  chassis.wait_drive();
+
+arm.move_relative(750, 100);
+  pros::delay(500);
+chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-74, DRIVE_SPEED);
+  chassis.wait_drive();
+  
+}
+
+ void Match_Auton_mid() {
+  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//drive to goal and score matchload //////////////////////////////////////////////////////////////////////////////////////////////
+chassis.set_drive_pid(144, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+arm.move_relative(750, 100);
+  pros::delay(500);
+chassis.set_drive_pid(25, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-20, DRIVE_SPEED);
+  chassis.wait_drive();
+arm.move_relative(-750, 100);
+  pros::delay(500);
+
+//push two over mid onto offensive side 
+wings.set_value(true);
+  chassis.wait_drive();
+  pros::delay(500);
+chassis.set_drive_pid(-92, DRIVE_SPEED);
+  chassis.wait_drive();
+  pros::delay(50);
+chassis.set_drive_pid(15, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//move to matchload bar and push tri out 
+ wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_turn_pid(45,TURN_SPEED);
+  chassis.wait_drive(); 
+chassis.set_drive_pid(-172, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive();
+ wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-54, 400);
+  chassis.wait_drive();
+ 
+ wings.set_value(false);
+  chassis.wait_drive();
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+//push tri to offensive side and touch hang bar 
+  chassis.set_drive_pid(-102,350);
+  chassis.wait_drive();
+arm.move_relative(3000, 100);
+  pros::delay(50);
+ }
+
+
+
+
+void Skills1() { 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//drive to goal and score matchload //////////////////////////////////////////////////////////////////////////////////////////////
+fly.move_velocity(700);
+  pros::c::delay(27000);
+fly.move_velocity(0);
+  pros::delay(50);
+
+chassis.set_drive_pid(9, DRIVE_SPEED);
+  chassis.wait_drive(); 
+arm.move_relative(-1300, 100);
+  pros::delay(1500);
+  chassis.wait_drive();
+
+//make way to other side of match load bar///////////////////////
+
+chassis.set_turn_pid(208, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-9, DRIVE_SPEED);
+  chassis.wait_drive();  
+chassis.set_drive_pid(-256, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score on left side of goal 
+chassis.set_turn_pid(180,TURN_SPEED);
+  chassis.wait_drive();
+wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-60, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(120, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.wait_drive();
+wings.set_value(false);
+  chassis.wait_drive();  
+chassis.set_drive_pid(25, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score left centar of goal   
+chassis.set_turn_pid(40, TURN_SPEED);
+  chassis.wait_drive();
+ 
+chassis.set_drive_pid(-132, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(110, TURN_SPEED);
+  chassis.wait_drive();
+ chassis.set_drive_pid(-75, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(215, TURN_SPEED);
+  chassis.wait_drive();
+wings.set_value(true);
+  chassis.wait_drive(); 
+chassis.set_drive_pid(-102, DRIVE_SPEED);
+  chassis.wait_drive();
+
+wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_drive_pid(80, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score right centar of goal 
+
+chassis.set_turn_pid(110, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-62, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(215, DRIVE_SPEED);
+  chassis.wait_drive();
+wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-102, DRIVE_SPEED);
+  chassis.wait_drive();
+
+wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_drive_pid(97, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score on right side of goal
+chassis.set_turn_pid(110, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-62, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(215, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-85, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(120, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-82, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-110, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(-305, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-100, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
 }
 
 
 
-///
-// Turn Example
-///
-void turn_example() {
-  // The first parameter is target degrees
-  // The second parameter is max speed the robot will drive at
+void Skills2() {
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  chassis.set_turn_pid(90, TURN_SPEED);
+//drive to goal and score matchload //////////////////////////////////////////////////////////////////////////////////////////////
+
+fly.move_velocity(700);
+  pros::c::delay(3000);
+fly.move_velocity(0);
+  pros::delay(50);
+
+chassis.set_drive_pid(9, DRIVE_SPEED);
+  chassis.wait_drive(); 
+arm.move_relative(-1300, 100);
+  pros::delay(2000);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(45, TURN_SPEED);
+//make way to other side of match load bar///////////////////////
+
+chassis.set_turn_pid(218, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-9, DRIVE_SPEED);
+  chassis.wait_drive();  
+chassis.set_drive_pid(-256, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(0, TURN_SPEED);
+
+//score on left side of goal 
+
+chassis.set_turn_pid(180,TURN_SPEED);
   chassis.wait_drive();
-}
-
-
-
-///
-// Combining Turn + Drive
-///
-void drive_and_turn() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
+chassis.set_drive_pid(-101, DRIVE_SPEED);
   chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
+chassis.set_turn_pid(120, DRIVE_SPEED);
   chassis.wait_drive();
-
-  chassis.set_turn_pid(-45, TURN_SPEED);
+chassis.set_drive_pid(-60, DRIVE_SPEED);
   chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
+chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(25, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
+
+//score left centar of goal   
+chassis.set_turn_pid(40, TURN_SPEED);
+  chassis.wait_drive();
+ 
+chassis.set_drive_pid(-152, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(110, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-82, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(215, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-112, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_drive_pid(87, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score right centar of goal 
+
+chassis.set_turn_pid(110, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(215, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-92, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_drive_pid(87, DRIVE_SPEED);
+  chassis.wait_drive();
+
+
+//score on right side of goal
+chassis.set_turn_pid(110, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(215, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-95, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(120, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-110, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_turn_pid(-305, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-100, DRIVE_SPEED);
+  chassis.wait_drive();
+
+chassis.set_drive_pid(50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-50, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(50, DRIVE_SPEED);
   chassis.wait_drive();
 }
 
@@ -134,29 +513,72 @@ void drive_and_turn() {
 ///
 // Wait Until and Changing Max Speed
 ///
-void wait_until_change_speed() {
-  // wait_until will wait until the robot gets to a desired position
-
-
-  // When the robot gets to 6 inches, the robot will travel the remaining distance at a max speed of 40
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot will go the remaining distance at 40 speed
+void skills() {
+  //machload 
+fly.move_velocity(700);
+  pros::c::delay(10000);
+fly.move_velocity(0);
+  pros::delay(50);
+arm.move_relative(-750, 100);
+  pros::delay(3000);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(45, TURN_SPEED);
+//make way to other side of match load bar///////////////////////
+chassis.set_drive_pid(3, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(45, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-258, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-45, TURN_SPEED);
+//score on left side of goal 
+wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_turn_pid(15,TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(72, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(0, TURN_SPEED);
+//score left centar of goal   
+chassis.set_turn_pid(35, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-148.5, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_drive_pid(144, DRIVE_SPEED);
   chassis.wait_drive();
 
-  // When the robot gets to -6 inches, the robot will travel the remaining distance at a max speed of 40
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_until(-6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot will go the remaining distance at 40 speed
+//score right centar of goal 
+wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_turn_pid(45, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-144, DRIVE_SPEED);
+  chassis.wait_drive();
+wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_drive_pid(144, DRIVE_SPEED);
+  chassis.wait_drive();
+
+//score on right side of goal 
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-144, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-72,DRIVE_SPEED);
   chassis.wait_drive();
 }
 
@@ -165,20 +587,13 @@ void wait_until_change_speed() {
 ///
 // Swing Example
 ///
-void swing_example() {
-  // The first parameter is ez::LEFT_SWING or ez::RIGHT_SWING
-  // The second parameter is target degrees
-  // The third parameter is speed of the moving side of the drive
+void shortsideauton() {
 
+chassis.set_drive_pid(72, DRIVE_SPEED);
+chassis.wait_drive();
+chassis.set_drive_pid(-25, DRIVE_SPEED);
+chassis.wait_drive();
 
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(12);
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, 0, SWING_SPEED);
-  chassis.wait_drive();
 }
 
 
@@ -187,19 +602,53 @@ void swing_example() {
 // Auto that tests everything
 ///
 void combining_movements() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
+ chassis.set_drive_pid(144, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+arm.move_relative(750, 100);
+  pros::delay(500);
+chassis.set_drive_pid(25, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_drive_pid(-15, DRIVE_SPEED);
+  chassis.wait_drive();
+//arm.move_relative(-750, 100);
+  //pros::delay(500);
+
+//push two over mid onto offensive side 
+wings.set_value(true);
+  chassis.wait_drive();
+  pros::delay(500);
+chassis.set_drive_pid(-92, DRIVE_SPEED);
+  chassis.wait_drive();
+  pros::delay(50);
+chassis.set_drive_pid(15, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(45, TURN_SPEED);
+
+//move to matchload bar and push tri out 
+ wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_turn_pid(45,TURN_SPEED);
+  chassis.wait_drive(); 
+chassis.set_drive_pid(-172, DRIVE_SPEED);
+  chassis.wait_drive();
+chassis.set_turn_pid(-45, TURN_SPEED);
+  chassis.wait_drive();
+ wings.set_value(true);
+  chassis.wait_drive();
+chassis.set_drive_pid(-54, 400);
+  chassis.wait_drive();
+ 
+ arm.move_relative(3000, 100);
+  pros::delay(500);
+ wings.set_value(false);
+  chassis.wait_drive();
+chassis.set_turn_pid(-90, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_swing_pid(ez::RIGHT_SWING, -45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
+//push tri to offensive side and touch hang bar 
+chassis.set_drive_pid(-105,350);
   chassis.wait_drive();
 }
 
